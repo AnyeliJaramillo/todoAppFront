@@ -1,0 +1,182 @@
+<div class="login-page">
+  <div class="login-card">
+    <h2 class="login-title">Iniciar Sesión</h2>
+
+    <div *ngIf="errorMensaje && !mostrarModalCorreo && !mostrarModalCodigo && !mostrarModalNuevaPassword" class="login-error">
+      {{ errorMensaje }}
+    </div>
+
+    <div *ngIf="exitoMensaje && !mostrarModalCorreo && !mostrarModalCodigo && !mostrarModalNuevaPassword" class="login-success">
+      {{ exitoMensaje }}
+    </div>
+
+    <input
+      type="email"
+      placeholder="Correo"
+      [(ngModel)]="correo"
+      class="login-input"
+    />
+
+    <div class="password-group">
+      <input
+        [type]="mostrarPassword ? 'text' : 'password'"
+        placeholder="Contraseña"
+        [(ngModel)]="password"
+        class="login-input"
+      />
+
+      <!-- BOTÓN CON ÍCONO -->
+      <button type="button" class="toggle-password" (click)="togglePassword()">
+        <!-- OJO (mostrar) -->
+        <svg *ngIf="!mostrarPassword" viewBox="0 0 24 24">
+          <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+
+        <!-- OJO CERRADO -->
+        <svg *ngIf="mostrarPassword" viewBox="0 0 24 24">
+          <path d="M17.94 17.94A10.9 10.9 0 0 1 12 19C6 19 2 12 2 12a18.4 18.4 0 0 1 5.06-5.94"/>
+          <path d="M9.9 4.24A10.4 10.4 0 0 1 12 5c6 0 10 7 10 7a18.5 18.5 0 0 1-2.16 3.19"/>
+          <path d="M14.12 14.12A3 3 0 0 1 9.88 9.88"/>
+          <path d="M3 3l18 18"/>
+        </svg>
+      </button>
+    </div>
+
+    <button
+      type="button"
+      (click)="login()"
+      class="login-button"
+      [disabled]="cargando"
+    >
+      {{ cargando ? 'Ingresando...' : 'Entrar' }}
+    </button>
+
+    <div class="divider">
+      <span>o</span>
+    </div>
+
+    <div class="google-container">
+      <div id="googleButton"></div>
+    </div>
+
+    <button
+      type="button"
+      class="forgot-password"
+      (click)="abrirModalRecuperar()"
+    >
+      ¿Olvidaste tu contraseña?
+    </button>
+  </div>
+</div>
+
+<!-- MODAL 1 -->
+<div class="modal-fondo" *ngIf="mostrarModalCorreo">
+  <div class="modal-recuperar">
+    <h3>Coloca correo de recuperación</h3>
+
+    <div *ngIf="errorMensaje" class="login-error">
+      {{ errorMensaje }}
+    </div>
+
+    <div *ngIf="exitoMensaje" class="login-success">
+      {{ exitoMensaje }}
+    </div>
+
+    <input
+      type="email"
+      placeholder="Correo registrado"
+      [(ngModel)]="recuperarForm.correo"
+      class="login-input"
+    />
+
+    <div class="modal-actions">
+      <button type="button" class="btn-cancelar" (click)="cerrarTodosLosModales()">
+        Cancelar
+      </button>
+
+      <button type="button" class="btn-guardar" (click)="enviarCodigo()">
+        Enviar código
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL 2 -->
+<div class="modal-fondo" *ngIf="mostrarModalCodigo">
+  <div class="modal-recuperar">
+    <h3>Código de verificación</h3>
+
+    <div *ngIf="errorMensaje" class="login-error">
+      {{ errorMensaje }}
+    </div>
+
+    <div *ngIf="exitoMensaje" class="login-success">
+      {{ exitoMensaje }}
+    </div>
+
+    <p class="modal-texto">
+      Escribe el código que llegó a tu correo.
+    </p>
+
+    <input
+      type="text"
+      placeholder="Código de verificación"
+      [(ngModel)]="recuperarForm.codigo"
+      class="login-input"
+    />
+
+    <div class="modal-actions">
+      <button type="button" class="btn-cancelar" (click)="volverACorreo()">
+        Atrás
+      </button>
+
+      <button type="button" class="btn-guardar" (click)="verificarCodigo()">
+        Verificar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL 3 -->
+<div class="modal-fondo" *ngIf="mostrarModalNuevaPassword">
+  <div class="modal-recuperar">
+    <h3>Coloca tu nueva contraseña</h3>
+
+    <div *ngIf="errorMensaje" class="login-error">
+      {{ errorMensaje }}
+    </div>
+
+    <div *ngIf="exitoMensaje" class="login-success">
+      {{ exitoMensaje }}
+    </div>
+
+    <p class="modal-texto">
+      Ingresa y confirma tu nueva contraseña.
+    </p>
+
+    <input
+      type="password"
+      placeholder="Nueva contraseña"
+      [(ngModel)]="recuperarForm.nuevaPassword"
+      class="login-input"
+    />
+
+    <input
+      type="password"
+      placeholder="Confirmar contraseña"
+      [(ngModel)]="recuperarForm.confirmarPassword"
+      class="login-input"
+    />
+
+    <div class="modal-actions">
+      <button type="button" class="btn-cancelar" (click)="volverACodigo()">
+        Atrás
+      </button>
+
+      <button type="button" class="btn-guardar" (click)="restablecerPassword()">
+        Guardar nueva contraseña
+      </button>
+    </div>
+  </div>
+</div>

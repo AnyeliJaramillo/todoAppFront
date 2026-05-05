@@ -1,0 +1,220 @@
+<div
+  *ngIf="mostrarMensaje"
+  class="notificacion"
+  [ngClass]="[
+    tipoMensaje === 'success' ? 'notificacion-exito' : 'notificacion-error',
+    cerrandoMensaje ? 'notificacion-saliendo' : ''
+  ]"
+>
+  {{ mensaje }}
+</div>
+
+<div class="tareas-contenido">
+  <div class="encabezado">
+    <div>
+      <h1>Tareas</h1>
+      <p>Gestiona las tareas y asígnalas a proyectos e ingenieros</p>
+    </div>
+
+    <button class="btn-nuevo" (click)="abrirModal()">
+      + Crear tarea
+    </button>
+  </div>
+
+  <div *ngIf="cargando" class="mensaje-panel">
+    Cargando tareas...
+  </div>
+
+  <div *ngIf="!cargando && tareas.length === 0" class="mensaje-panel">
+    Aún no hay tareas registradas.
+  </div>
+
+  <div class="grid-tareas" *ngIf="!cargando && tareas.length > 0">
+    <div class="card-tarea" *ngFor="let tarea of tareas">
+      <div class="card-header">
+        <h3>{{ tarea.titulo }}</h3>
+
+        <div class="acciones">
+
+          <!-- VER -->
+          <button class="btn-icono btn-ver" (click)="abrirModalVer(tarea)" title="Ver tarea">
+            <svg viewBox="0 0 24 24">
+              <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+
+          <!-- EDITAR -->
+          <button class="btn-icono btn-editar" (click)="abrirModalEditar(tarea)" title="Editar tarea">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 20h9"/>
+              <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+            </svg>
+          </button>
+
+          <!-- ELIMINAR -->
+          <button class="btn-icono btn-eliminar" (click)="eliminarTarea(tarea._id)" title="Eliminar tarea">
+            <svg viewBox="0 0 24 24">
+              <path d="M3 6h18"/>
+              <path d="M8 6V4h8v2"/>
+              <path d="M19 6l-1 14H6L5 6"/>
+              <path d="M10 11v6"/>
+              <path d="M14 11v6"/>
+            </svg>
+          </button>
+
+        </div>
+      </div>
+
+      <p class="descripcion">{{ tarea.descripcion }}</p>
+
+      <p class="dato">
+        <strong>Proyecto:</strong>
+        {{ tarea.proyecto?.nombre }}
+      </p>
+
+      <p class="dato">
+        <strong>Ingeniero:</strong>
+        {{ tarea.ingenieroAsignado?.nombre }}
+      </p>
+
+      <div class="tags">
+        <span class="tag" [ngClass]="claseEstado(tarea.estado)">
+          {{ tarea.estado }}
+        </span>
+
+        <span class="tag" [ngClass]="clasePrioridad(tarea.prioridad)">
+          {{ tarea.prioridad }}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL VER TAREA -->
+<div class="modal-fondo" *ngIf="mostrarModalVer">
+  <div class="modal">
+    <h2>Detalle de la tarea</h2>
+
+    <div class="campo">
+      <label>Nombre de la tarea</label>
+      <p>{{ tareaSeleccionada?.titulo }}</p>
+    </div>
+
+    <div class="campo">
+      <label>Descripción</label>
+      <p>{{ tareaSeleccionada?.descripcion }}</p>
+    </div>
+
+    <div class="campo">
+      <label>Proyecto</label>
+      <p>{{ tareaSeleccionada?.proyecto?.nombre }}</p>
+    </div>
+
+    <div class="campo">
+      <label>Ingeniero</label>
+      <p>{{ tareaSeleccionada?.ingenieroAsignado?.nombre }}</p>
+    </div>
+
+    <div class="campo">
+      <label>Prioridad</label>
+      <p>{{ tareaSeleccionada?.prioridad }}</p>
+    </div>
+
+    <div class="campo">
+      <label>Estado</label>
+      <p>{{ tareaSeleccionada?.estado }}</p>
+    </div>
+
+    <div class="acciones-modal">
+      <button class="btn-cancelar" (click)="cerrarModalVer()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-fondo" *ngIf="mostrarModal">
+  <div class="modal">
+    <h2>{{ modoEdicion ? 'Editar tarea' : 'Crear tarea' }}</h2>
+
+    <div class="campo">
+      <label>Nombre de la tarea</label>
+      <input
+        type="text"
+        [(ngModel)]="tareaForm.titulo"
+        placeholder="Nombre de la tarea"
+      />
+    </div>
+
+    <div class="campo">
+      <label>Descripción</label>
+      <textarea
+        rows="4"
+        [(ngModel)]="tareaForm.descripcion"
+        placeholder="Descripción de la tarea"
+      ></textarea>
+    </div>
+
+    <div class="campo">
+      <label>Proyecto</label>
+      <select [(ngModel)]="tareaForm.proyecto">
+        <option value="">Selecciona un proyecto</option>
+        <option *ngFor="let proyecto of proyectos" [value]="proyecto._id">
+          {{ proyecto.nombre }}
+        </option>
+      </select>
+    </div>
+
+    <div class="campo">
+      <label>Ingeniero</label>
+      <select [(ngModel)]="tareaForm.ingenieroAsignado">
+        <option value="">Selecciona un ingeniero</option>
+        <option *ngFor="let ingeniero of ingenieros" [value]="ingeniero._id">
+          {{ ingeniero.nombre }}
+        </option>
+      </select>
+    </div>
+
+    <div class="fila">
+      <div class="campo">
+        <label>Prioridad</label>
+        <select [(ngModel)]="tareaForm.prioridad">
+          <option value="Alta">Alta</option>
+          <option value="Media">Media</option>
+          <option value="Baja">Baja</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label>Estado</label>
+        <select [(ngModel)]="tareaForm.estado">
+          <option value="Pendiente">Pendiente</option>
+          <option value="En progreso">En progreso</option>
+          <option value="Finalizada">Finalizada</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="acciones-modal">
+      <button class="btn-cancelar" (click)="cerrarModal()">Cancelar</button>
+      <button class="btn-guardar" (click)="guardarTarea()">
+        {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+      </button>
+    </div>
+  </div>
+</div><!-- MODAL CONFIRMAR ELIMINAR TAREA -->
+<div class="modal-fondo" *ngIf="mostrarConfirmacion">
+  <div class="modal-confirm">
+    <h2>¿Eliminar tarea?</h2>
+    <p>Recuerda que se perderá toda la información de esta tarea.</p>
+
+    <div class="acciones-modal">
+      <button class="btn-cancelar" (click)="cerrarConfirmacion()">
+        Cancelar
+      </button>
+
+      <button class="btn-eliminar-confirm" (click)="confirmarEliminar()">
+        Sí, eliminar
+      </button>
+    </div>
+  </div>
+</div>

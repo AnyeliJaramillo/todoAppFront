@@ -1,0 +1,118 @@
+<div class="contenido-ingeniero">
+  <h1 class="titulo">Panel del ingeniero</h1>
+  <p class="subtitulo">Resumen de la información asignada</p>
+
+  <div *ngIf="errorMensaje" class="mensaje-error">
+    {{ errorMensaje }}
+  </div>
+
+  <div class="resumen-grid" *ngIf="vistaActual === 'inicio'">
+    <div class="resumen-card">
+      <span>Total de tareas</span>
+      <h2>{{ tareas.length }}</h2>
+    </div>
+
+    <div class="resumen-card">
+      <span>Total de proyectos</span>
+      <h2>{{ proyectos.length }}</h2>
+    </div>
+  </div>
+
+  <div class="seccion" *ngIf="vistaActual === 'inicio' || vistaActual === 'proyectos'">
+    <h2>Mis proyectos</h2>
+
+    <div *ngIf="cargandoProyectos" class="mensaje-info">
+      Cargando proyectos...
+    </div>
+
+    <div *ngIf="!cargandoProyectos && proyectos.length === 0" class="mensaje-info">
+      No tienes proyectos asignados.
+    </div>
+
+    <div class="grid-cards" *ngIf="!cargandoProyectos && proyectos.length > 0">
+      <div class="card" *ngFor="let proyecto of proyectos">
+        <div class="card-header">
+          <h3>{{ proyecto.nombre }}</h3>
+
+          <span class="badge" [ngClass]="claseEstadoProyecto(proyecto.estado)">
+            {{ proyecto.estado }}
+          </span>
+        </div>
+
+        <p class="descripcion">{{ proyecto.descripcion }}</p>
+
+        <div class="card-detalles">
+          <p><strong>Prioridad:</strong> {{ proyecto.prioridad }}</p>
+          <p><strong>Entrega:</strong> {{ proyecto.fechaEntrega | date:'dd/MM/yyyy' }}</p>
+        </div>
+
+        <div class="acciones-estado">
+          <button
+            class="btn-estado btn-desarrollo"
+            (click)="actualizarEstadoProyecto(proyecto, 'Activo')"
+            [disabled]="proyecto.estado === 'Activo' || cargandoAccion"
+          >
+            En desarrollo
+          </button>
+
+          <button
+            class="btn-estado btn-finalizado"
+            (click)="actualizarEstadoProyecto(proyecto, 'Finalizado')"
+            [disabled]="proyecto.estado === 'Finalizado' || cargandoAccion"
+          >
+            Finalizado
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seccion" *ngIf="vistaActual === 'inicio' || vistaActual === 'tareas'">
+    <h2>Mis tareas</h2>
+
+    <div *ngIf="cargandoTareas" class="mensaje-info">
+      Cargando tareas...
+    </div>
+
+    <div *ngIf="!cargandoTareas && tareas.length === 0" class="mensaje-info">
+      No tienes tareas asignadas.
+    </div>
+
+    <div class="grid-cards" *ngIf="!cargandoTareas && tareas.length > 0">
+      <div class="card" *ngFor="let tarea of tareas">
+        <div class="card-header">
+          <h3>{{ tarea.titulo }}</h3>
+
+          <span class="badge" [ngClass]="claseEstadoTarea(tarea.estado)">
+            {{ tarea.estado }}
+          </span>
+        </div>
+
+        <p class="descripcion">{{ tarea.descripcion }}</p>
+
+        <div class="card-detalles">
+          <p><strong>Proyecto:</strong> {{ tarea.proyecto?.nombre }}</p>
+          <p><strong>Prioridad:</strong> {{ tarea.prioridad }}</p>
+        </div>
+
+        <div class="acciones-estado">
+          <button
+            class="btn-estado btn-desarrollo"
+            (click)="actualizarEstadoTarea(tarea, 'En progreso')"
+            [disabled]="tarea.estado === 'En progreso' || cargandoAccion"
+          >
+            En desarrollo
+          </button>
+
+          <button
+            class="btn-estado btn-finalizado"
+            (click)="actualizarEstadoTarea(tarea, 'Finalizada')"
+            [disabled]="tarea.estado === 'Finalizada' || cargandoAccion"
+          >
+            Terminada
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

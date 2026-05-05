@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #6b9080;
+  --color-secondary: #a4c3b2;
+  --color-soft: #cce3de;
+  --color-light: #eaf4f4;
+  --color-white-soft: #f6fff8;
+}
+
+.notificacion {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 14px 22px;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  z-index: 9999;
+  min-width: 280px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  animation: slideIn 0.4s ease, fadeOut 0.4s ease 2.2s forwards;
+}
+
+/* ÉXITO */
+.notificacion-exito {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  box-shadow: 0 10px 25px rgba(34, 197, 94, 0.4);
+}
+
+/* ERROR */
+.notificacion-error {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4);
+}
+
+/* ANIMACIÓN ENTRADA */
+@keyframes slideIn {
+  from {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* ANIMACIÓN SALIDA */
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    transform: translateX(120%);
+  }
+}

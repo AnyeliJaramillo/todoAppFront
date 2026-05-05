@@ -1,0 +1,182 @@
+<div
+  *ngIf="mostrarMensaje"
+  class="notificacion"
+  [ngClass]="[
+    tipoMensaje === 'success' ? 'notificacion-exito' : 'notificacion-error',
+    cerrandoMensaje ? 'notificacion-saliendo' : ''
+  ]"
+>
+  {{ mensaje }}
+</div>
+
+<div class="usuarios-contenido">
+  <div class="encabezado">
+    <div>
+      <h1>Usuarios</h1>
+      <p>Gestiona los perfiles de los ingenieros registrados</p>
+    </div>
+
+    <button class="btn-nuevo" (click)="abrirModalNuevo()">
+      + Crear usuario
+    </button>
+  </div>
+
+  <div *ngIf="cargando" class="mensaje-panel">
+    Cargando usuarios...
+  </div>
+
+  <div *ngIf="!cargando && usuarios.length === 0" class="mensaje-panel">
+    Aún no hay ingenieros registrados.
+  </div>
+
+  <div class="tabla-contenedor" *ngIf="!cargando && usuarios.length > 0">
+    <table class="tabla-usuarios">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Correo</th>
+          <th>Rol</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let usuario of usuarios">
+          <td>{{ usuario.nombre }}</td>
+          <td>{{ usuario.correo }}</td>
+          <td>{{ usuario.rol }}</td>
+          <td>
+            <span class="estado" [ngClass]="usuario.activo ? 'estado-activo' : 'estado-inactivo'">
+              {{ usuario.activo ? 'Activo' : 'Inactivo' }}
+            </span>
+          </td>
+
+          <td class="acciones">
+            <!-- VER -->
+            <button class="btn-icono btn-ver" (click)="abrirModalVer(usuario)" title="Ver usuario">
+              <svg viewBox="0 0 24 24">
+                <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+
+            <!-- EDITAR -->
+            <button class="btn-icono btn-editar" (click)="abrirModalEditar(usuario)" title="Editar usuario">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 20h9"/>
+                <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+              </svg>
+            </button>
+
+            <!-- ELIMINAR -->
+            <button class="btn-icono btn-eliminar" (click)="abrirConfirmarEliminar(usuario._id)" title="Eliminar usuario">
+              <svg viewBox="0 0 24 24">
+                <path d="M3 6h18"/>
+                <path d="M8 6V4h8v2"/>
+                <path d="M19 6l-1 14H6L5 6"/>
+                <path d="M10 11v6"/>
+                <path d="M14 11v6"/>
+              </svg>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- MODAL VER USUARIO -->
+<div class="modal-fondo" *ngIf="mostrarModalVer">
+  <div class="modal">
+    <h2>Detalle del usuario</h2>
+
+    <div class="campo">
+      <label>Nombre</label>
+      <p>{{ usuarioSeleccionado?.nombre }}</p>
+    </div>
+
+    <div class="campo">
+      <label>Correo</label>
+      <p>{{ usuarioSeleccionado?.correo }}</p>
+    </div>
+
+    <div class="campo">
+      <label>Rol</label>
+      <p>{{ usuarioSeleccionado?.rol }}</p>
+    </div>
+
+    <div class="campo">
+      <label>Estado</label>
+      <p>{{ usuarioSeleccionado?.activo ? 'Activo' : 'Inactivo' }}</p>
+    </div>
+
+    <div class="acciones-modal">
+      <button class="btn-cancelar" (click)="cerrarModalVer()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-fondo" *ngIf="mostrarModal">
+  <div class="modal">
+    <h2>{{ modoEdicion ? 'Editar usuario' : 'Crear usuario' }}</h2>
+
+    <div class="campo">
+      <label>Nombre</label>
+      <input
+        type="text"
+        [(ngModel)]="usuarioForm.nombre"
+        placeholder="Nombre del ingeniero"
+      />
+    </div>
+
+    <div class="campo">
+      <label>Correo</label>
+      <input
+        type="email"
+        [(ngModel)]="usuarioForm.correo"
+        placeholder="correo@ejemplo.com"
+      />
+    </div>
+
+    <div class="campo">
+      <label>Contraseña {{ modoEdicion ? '(opcional)' : '' }}</label>
+      <input
+        type="password"
+        [(ngModel)]="usuarioForm.password"
+        placeholder="Ingresa la contraseña"
+      />
+    </div>
+
+    <div class="campo">
+      <label>Estado</label>
+      <select [(ngModel)]="usuarioForm.activo">
+        <option [ngValue]="true">Activo</option>
+        <option [ngValue]="false">Inactivo</option>
+      </select>
+    </div>
+
+    <div class="acciones-modal">
+      <button class="btn-cancelar" (click)="cerrarModal()">Cancelar</button>
+      <button class="btn-guardar" (click)="guardarUsuario()">
+        {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+      </button>
+    </div>
+  </div>
+</div>
+<div class="modal-fondo" *ngIf="mostrarConfirmarEliminar">
+  <div class="modal-confirm">
+    <h2>¿Estás seguro?</h2>
+    <p>¿Deseas eliminar este usuario?</p>
+
+    <div class="acciones-modal">
+      <button class="btn-cancelar" (click)="cerrarConfirmarEliminar()">
+        Cancelar
+      </button>
+
+      <button class="btn-eliminar-confirm" (click)="confirmarEliminarUsuario()">
+        Sí, eliminar
+      </button>
+    </div>
+  </div>
+</div>

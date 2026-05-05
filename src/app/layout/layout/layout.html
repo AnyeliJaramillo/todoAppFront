@@ -1,0 +1,90 @@
+<div class="layout-shell" [class.dark-mode]="modoOscuro">
+  <aside class="sidebar">
+    <div>
+      <h1 class="logo">TodoAppDev</h1>
+
+      <div class="perfil">
+        <div class="avatar">
+          {{ usuario?.nombre?.charAt(0) || 'U' }}
+        </div>
+
+        <div class="perfil-info">
+          <h3>{{ usuario?.nombre || 'Usuario' }}</h3>
+          <p>
+            {{ esAdmin ? 'DevHooked' : 'Ingeniero' }}
+          </p>
+        </div>
+      </div>
+
+      <button class="modo-btn" (click)="toggleModoOscuro()">
+        {{ modoOscuro ? ' Modo claro' : ' Modo oscuro' }}
+      </button>
+
+      <nav class="menu">
+        <!-- ADMIN -->
+        <ng-container *ngIf="esAdmin">
+          <button
+            class="menu-btn"
+            routerLink="/admin"
+            routerLinkActive="activo"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            Inicio
+          </button>
+
+          <button class="menu-btn" routerLink="/proyectos" routerLinkActive="activo">
+            Proyectos
+          </button>
+
+          <button class="menu-btn" routerLink="/tareas" routerLinkActive="activo">
+            Tareas
+          </button>
+
+          <button class="menu-btn" routerLink="/usuarios" routerLinkActive="activo">
+            Usuarios
+          </button>
+        </ng-container>
+
+        <!-- INGENIERO -->
+        <ng-container *ngIf="esIngeniero">
+          <button
+            class="menu-btn"
+            routerLink="/ingeniero"
+            routerLinkActive="activo"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            Inicio
+          </button>
+
+          <button
+            class="menu-btn"
+            routerLink="/ingeniero/proyectos"
+            routerLinkActive="activo"
+          >
+            Mis proyectos
+          </button>
+
+          <button
+            class="menu-btn"
+            routerLink="/ingeniero/tareas"
+            routerLinkActive="activo"
+          >
+            Mis tareas
+          </button>
+        </ng-container>
+
+        <button class="menu-btn salir" (click)="logout()">
+          Cerrar sesión
+        </button>
+      </nav>
+    </div>
+
+    <footer class="sidebar-footer">
+      Creado por Jose Cabrera, Anyeli Jaramillo &amp; Danna Lagos 2026
+    </footer>
+  </aside>
+
+  <main class="contenido">
+    <router-outlet></router-outlet>
+  </main>
+</div>

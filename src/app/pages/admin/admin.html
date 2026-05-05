@@ -1,0 +1,274 @@
+<div *ngIf="mostrarMensaje" class="notificacion"
+  [ngClass]="tipoMensaje === 'success' ? 'notificacion-exito' : 'notificacion-error'">
+  {{ mensaje }}
+</div>
+
+<div class="contenido">
+  <div class="encabezado">
+    <div>
+      <h1>Panel de control</h1>
+      <p>Vista general de los proyectos registrados</p>
+    </div>
+
+    <div class="acciones-encabezado">
+      <button class="btn-secundario" type="button" (click)="abrirModalPerfil()">
+        + Crear perfil
+      </button>
+
+      <button class="btn-nuevo" type="button" (click)="abrirModalNuevo()">
+        + Nuevo proyecto
+      </button>
+
+      <button class="btn-nuevo" type="button" (click)="abrirModalTarea()">
+        + Nueva tarea
+      </button>
+      <button class="btn-secundario" (click)="abrirReporte()">
+   Ver reporte
+</button>
+    </div>
+  </div>
+
+  <div class="resumen-grid">
+    <div class="resumen-card">
+      <span class="resumen-label">Total de proyectos</span>
+      <h2>{{ totalProyectos }}</h2>
+    </div>
+
+    <div class="resumen-card">
+      <span class="resumen-label">Proyectos activos</span>
+      <h2>{{ proyectosActivos }}</h2>
+    </div>
+  </div>
+
+  <!-- ===================== -->
+<!-- REPORTE MENSUAL -->
+<!-- ===================== -->
+
+
+  <div class="modal-fondo" *ngIf="mostrarReporte">
+  <div class="modal">
+
+    <h2>Reporte mensual</h2>
+
+    <div class="campo">
+      <label>Selecciona mes</label>
+      <input type="month" [(ngModel)]="mesSeleccionado" />
+    </div>
+
+    <div class="acciones-modal">
+      <button class="btn-guardar" (click)="generarReporte()">
+        Generar reporte
+      </button>
+      <button class="btn-cancelar" (click)="cerrarReporte()">
+        Cerrar
+      </button>
+    </div>
+
+    <!-- RESULTADOS -->
+    <div class="reporte-grid" *ngIf="reporte.totalProyectos > 0">
+
+      <div class="reporte-card">
+        <span>Total proyectos</span>
+        <h2>{{ reporte.totalProyectos }}</h2>
+      </div>
+
+      <div class="reporte-card">
+        <span>Activos</span>
+        <h2>{{ reporte.activos }}</h2>
+      </div>
+
+      <div class="reporte-card">
+        <span>Finalizados</span>
+        <h2>{{ reporte.finalizados }}</h2>
+      </div>
+
+      <div class="reporte-card">
+        <span>Total tareas</span>
+        <h2>{{ reporte.totalTareas }}</h2>
+      </div>
+
+      <div class="reporte-card">
+        <span>Usuarios</span>
+        <h2>{{ reporte.totalUsuarios }}</h2>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+  <div class="panel-proyectos">
+    <div class="panel-header">
+      <h2>Proyectos recientes</h2>
+      <button class="ver-todos" type="button" (click)="irAProyectos()">Ver todos</button>
+    </div>
+
+    <div *ngIf="cargando" class="mensaje-panel">
+      Cargando proyectos...
+    </div>
+
+    <div *ngIf="!cargando && proyectosRecientes.length === 0" class="mensaje-panel">
+      Aún no hay proyectos registrados.
+    </div>
+
+    <div class="lista-proyectos" *ngIf="!cargando && proyectosRecientes.length > 0">
+      <div class="proyecto-item" *ngFor="let proyecto of proyectosRecientes">
+        <div class="proyecto-top">
+          <h3>{{ proyecto.nombre }}</h3>
+          <span class="estado" [ngClass]="claseEstado(proyecto.estado)">
+            {{ proyecto.estado }}
+          </span>
+        </div>
+
+        <p>{{ proyecto.descripcion }}</p>
+
+        <div class="proyecto-footer">
+          <span class="prioridad" [ngClass]="{
+    'prioridad-alta': proyecto.prioridad === 'Alta',
+    'prioridad-media': proyecto.prioridad === 'Media',
+    'prioridad-baja': proyecto.prioridad === 'Baja'
+  }">
+            Prioridad: {{ proyecto.prioridad }}
+          </span>
+          <span>Entrega: {{ proyecto.fechaEntrega | date:'dd/MM/yyyy' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CREAR PERFIL -->
+<div class="modal-fondo" *ngIf="mostrarModalPerfil">
+  <div class="modal">
+    <h2>Crear perfil de ingeniero</h2>
+
+    <div class="campo">
+      <label>Nombre</label>
+      <input type="text" [(ngModel)]="perfilForm.nombre" placeholder="Nombre del ingeniero" />
+    </div>
+
+    <div class="campo">
+      <label>Correo</label>
+      <input type="email" [(ngModel)]="perfilForm.correo" placeholder="correo@ejemplo.com" />
+    </div>
+
+    <div class="campo">
+      <label>Contraseña</label>
+      <input type="password" [(ngModel)]="perfilForm.password" placeholder="Ingresa la contraseña" />
+    </div>
+
+    <div class="acciones-modal">
+      <button class="btn-cancelar" type="button" (click)="cerrarModalPerfil()">Cancelar</button>
+      <button class="btn-guardar" type="button" (click)="guardarPerfilIngeniero()">Guardar perfil</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CREAR PROYECTO -->
+<div class="modal-fondo" *ngIf="mostrarModal">
+  <div class="modal">
+    <h2>Nuevo proyecto</h2>
+
+    <div class="campo">
+      <label>Nombre</label>
+      <input type="text" [(ngModel)]="proyectoForm.nombre" />
+    </div>
+
+    <div class="campo">
+      <label>Descripción</label>
+      <textarea rows="4" [(ngModel)]="proyectoForm.descripcion"></textarea>
+    </div>
+
+    <div class="fila">
+      <div class="campo">
+        <label>Estado</label>
+        <select [(ngModel)]="proyectoForm.estado">
+          <option value="Activo">Activo</option>
+          <option value="En espera">En espera</option>
+          <option value="Finalizado">Finalizado</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label>Prioridad</label>
+        <select [(ngModel)]="proyectoForm.prioridad">
+          <option value="Alta">Alta</option>
+          <option value="Media">Media</option>
+          <option value="Baja">Baja</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="campo">
+      <label>Fecha de entrega</label>
+      <input type="date" [(ngModel)]="proyectoForm.fechaEntrega" />
+    </div>
+
+    <div class="acciones-modal">
+      <button class="btn-cancelar" type="button" (click)="cerrarModal()">Cancelar</button>
+      <button class="btn-guardar" type="button" (click)="guardarProyecto()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CREAR TAREA -->
+<div class="modal-fondo" *ngIf="mostrarModalTarea">
+  <div class="modal">
+    <h2>Crear tarea</h2>
+
+    <div class="campo">
+      <label>Nombre</label>
+      <input type="text" [(ngModel)]="tareaForm.titulo" />
+    </div>
+
+    <div class="campo">
+      <label>Descripción</label>
+      <textarea rows="3" [(ngModel)]="tareaForm.descripcion"></textarea>
+    </div>
+
+    <div class="campo">
+      <label>Proyecto</label>
+      <select [(ngModel)]="tareaForm.proyecto">
+        <option value="">Selecciona</option>
+        <option *ngFor="let p of proyectos" [value]="p._id">
+          {{ p.nombre }}
+        </option>
+      </select>
+    </div>
+
+    <div class="campo">
+      <label>Ingeniero</label>
+      <select [(ngModel)]="tareaForm.ingenieroAsignado">
+        <option value="">Selecciona</option>
+        <option *ngFor="let i of ingenieros" [value]="i._id">
+          {{ i.nombre }}
+        </option>
+      </select>
+    </div>
+
+    <div class="fila">
+      <div class="campo">
+        <label>Prioridad</label>
+        <select [(ngModel)]="tareaForm.prioridad">
+          <option value="Alta">Alta</option>
+          <option value="Media">Media</option>
+          <option value="Baja">Baja</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label>Estado</label>
+        <select [(ngModel)]="tareaForm.estado">
+          <option value="Pendiente">Pendiente</option>
+          <option value="En progreso">En progreso</option>
+          <option value="Finalizada">Finalizada</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="acciones-modal">
+      <button class="btn-cancelar" type="button" (click)="cerrarModalTarea()">Cancelar</button>
+      <button class="btn-guardar" type="button" (click)="guardarTarea()">Guardar</button>
+    </div>
+  </div>
+</div>
