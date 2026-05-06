@@ -28,12 +28,14 @@ export class Ingeniero implements OnInit {
 
   vistaActual: 'inicio' | 'proyectos' | 'tareas' = 'inicio';
 
+  private apiUrl = environment.apiUrl;
+  
   constructor(
     private authService: AuthService,
     private http: HttpClient,
     private cdRef: ChangeDetectorRef,
     private router: Router,
-    private apiUrl = environment.apiUrl,
+    
   ) {}
 
   ngOnInit(): void {

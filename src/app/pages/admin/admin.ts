@@ -78,12 +78,14 @@ reporte = {
 tareas: any[] = [];
 usuarios: any[] = [];
 
+  private apiUrl = environment.apiUrl;
+
   constructor(
     private router: Router,
     private proyectosService: ProyectosService,
     private cdRef: ChangeDetectorRef,
     private http: HttpClient,
-    private apiUrl = environment.apiUrl,
+    
   ) {
     const usuarioGuardado = localStorage.getItem('usuario');
     if (usuarioGuardado) {
