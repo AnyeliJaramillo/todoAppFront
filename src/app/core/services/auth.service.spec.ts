@@ -4,6 +4,7 @@ import {
   HttpTestingController
 } from '@angular/common/http/testing';
 import { AuthService } from './auth.service';
+import { environment } from '../../../environments/environment.prod';
 
 describe('HU1 y HU2 - AuthService', () => {
   let service: AuthService;
@@ -39,7 +40,7 @@ describe('HU1 y HU2 - AuthService', () => {
       expect(JSON.parse(localStorage.getItem('usuario') || '{}').nombre).toBe('Jose');
     });
 
-    const req = httpMock.expectOne('http://localhost:4000/api/auth/login');
+    const req = httpMock.expectOne(`${environment.apiUrl}/auth/login`);
     expect(req.request.method).toBe('POST');
     req.flush(mockResponse);
   });

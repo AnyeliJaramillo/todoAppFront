@@ -5,6 +5,8 @@ import { HttpClient } from '@angular/common/http';
 import { Router, RouterModule } from '@angular/router';
 import { Proyecto } from '../proyectos/proyecto.interface';
 import { ProyectosService } from '../proyectos/proyectos.service';
+import { environment } from '../../../environments/environment';
+
 
 @Component({
   selector: 'app-admin',
@@ -80,7 +82,8 @@ usuarios: any[] = [];
     private router: Router,
     private proyectosService: ProyectosService,
     private cdRef: ChangeDetectorRef,
-    private http: HttpClient
+    private http: HttpClient,
+    private apiUrl = environment.apiUrl,
   ) {
     const usuarioGuardado = localStorage.getItem('usuario');
     if (usuarioGuardado) {
@@ -96,7 +99,7 @@ this.cargarUsuarios();
   }
 
   cargarTareas() {
-  this.http.get<any>('http://localhost:4000/api/tareas').subscribe({
+  this.http.get<any>(`${this.apiUrl}/tareas`).subscribe({
     next: (res) => {
       this.tareas = res;
     }
@@ -104,7 +107,7 @@ this.cargarUsuarios();
 }
 
 cargarUsuarios() {
-  this.http.get<any>('http://localhost:4000/api/usuarios').subscribe({
+  this.http.get<any>(`${this.apiUrl}/usuarios`).subscribe({
     next: (res) => {
       this.usuarios = res;
     }
@@ -163,7 +166,7 @@ generarReporte() {
   this.reporte.totalUsuarios = usuariosMes.length;
 }
   cargarIngenieros(): void {
-    this.http.get<any>('http://localhost:4000/api/usuarios').subscribe({
+    this.http.get<any>(`${this.apiUrl}/usuarios`).subscribe({
       next: (respuesta) => {
         const lista = Array.isArray(respuesta)
           ? respuesta
@@ -255,7 +258,7 @@ generarReporte() {
       return;
     }
 
-    this.http.post('http://localhost:4000/api/usuarios', this.perfilForm).subscribe({
+    this.http.post(`${this.apiUrl}/usuarios`, this.perfilForm).subscribe({
       next: () => {
         this.cerrarModalPerfil();
         this.cargarIngenieros();
@@ -302,7 +305,7 @@ generarReporte() {
 
   this.guardandoTarea = true;
 
-  this.http.post('http://localhost:4000/api/tareas', this.tareaForm).subscribe({
+  this.http.post(`${this.apiUrl}/tareas`, this.tareaForm).subscribe({
     next: () => {
       this.guardandoTarea = false;
       this.cerrarModalTarea();

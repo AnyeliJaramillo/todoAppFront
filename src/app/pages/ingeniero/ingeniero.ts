@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../core/services/auth.service';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-ingeniero',
@@ -31,7 +32,8 @@ export class Ingeniero implements OnInit {
     private authService: AuthService,
     private http: HttpClient,
     private cdRef: ChangeDetectorRef,
-    private router: Router
+    private router: Router,
+    private apiUrl = environment.apiUrl,
   ) {}
 
   ngOnInit(): void {
@@ -71,7 +73,7 @@ export class Ingeniero implements OnInit {
     this.cargandoProyectos = true;
     this.cdRef.detectChanges();
 
-    const url = `http://localhost:4000/api/proyectos/ingeniero/${this.ingenieroId}`;
+    const url = `${this.apiUrl}/proyectos/ingeniero/${this.ingenieroId}`;
 
     this.http.get<any[]>(url).subscribe({
       next: (respuesta) => {
@@ -93,7 +95,7 @@ export class Ingeniero implements OnInit {
     this.cargandoTareas = true;
     this.cdRef.detectChanges();
 
-    const url = `http://localhost:4000/api/tareas/ingeniero/${this.ingenieroId}`;
+    const url = `${this.apiUrl}/tareas/ingeniero/${this.ingenieroId}`;
 
     this.http.get<any[]>(url).subscribe({
       next: (respuesta) => {
@@ -120,7 +122,7 @@ export class Ingeniero implements OnInit {
       ingenieroAsignado: proyecto.ingenieroAsignado?._id || proyecto.ingenieroAsignado || null
     };
 
-    this.http.put<any>(`http://localhost:4000/api/proyectos/${proyecto._id}`, payload).subscribe({
+    this.http.put<any>(`${this.apiUrl}/proyectos/${proyecto._id}`, payload).subscribe({
       next: (respuesta) => {
         const proyectoActualizado = respuesta?.data ?? respuesta;
 
@@ -150,7 +152,7 @@ export class Ingeniero implements OnInit {
       ingenieroAsignado: tarea.ingenieroAsignado?._id || tarea.ingenieroAsignado
     };
 
-    this.http.put<any>(`http://localhost:4000/api/tareas/${tarea._id}`, payload).subscribe({
+    this.http.put<any>(`${this.apiUrl}/tareas/${tarea._id}`, payload).subscribe({
       next: (respuesta) => {
         const tareaActualizada = respuesta?.data ?? respuesta;
 

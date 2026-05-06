@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Proyecto } from './proyecto.interface';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProyectosService {
-  private apiUrl = 'http://localhost:4000/api/proyectos';
+  private apiUrl = `${environment.apiUrl}/proyectos`;
 
   constructor(private http: HttpClient) {}
 
@@ -31,6 +32,6 @@ export class ProyectosService {
     return this.http.delete<{ mensaje: string }>(`${this.apiUrl}/${id}`);
   }
   obtenerIngenieros() {
-  return this.http.get<any[]>('http://localhost:4000/api/usuarios/ingenieros');
+  return this.http.get<any[]>(`${environment.apiUrl}/usuarios/ingenieros`);
 }
 }
