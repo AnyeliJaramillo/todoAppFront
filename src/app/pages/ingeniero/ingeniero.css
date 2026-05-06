@@ -1,20 +1,24 @@
 .contenido-ingeniero {
   width: 100%;
+  min-height: 100vh;
+  color: var(--text-main);
 }
 
+/* TITULOS */
 .titulo {
   font-size: 54px;
   margin: 0;
-  color: #203b32;
+  color: var(--text-main);
   font-weight: 900;
 }
 
 .subtitulo {
   margin: 10px 0 24px;
-  color: #4c685d;
+  color: var(--text-soft);
   font-size: 18px;
 }
 
+/* RESUMEN */
 .resumen-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(220px, 380px));
@@ -23,23 +27,37 @@
 }
 
 .resumen-card {
-  background: #f8fbf8;
-  border-radius: 20px;
+  background: linear-gradient(
+    180deg,
+    rgba(246, 255, 248, 0.88),
+    rgba(234, 244, 244, 0.72)
+  );
+  backdrop-filter: blur(14px);
+  border-radius: 22px;
   padding: 26px;
-  box-shadow: 0 10px 30px rgba(31, 60, 48, 0.08);
+  border: 1px solid rgba(107, 144, 128, 0.22);
+  box-shadow: 0 16px 34px rgba(47, 79, 70, 0.14);
+  transition: all 0.28s ease;
+}
+
+.resumen-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 24px 46px rgba(47, 79, 70, 0.22);
 }
 
 .resumen-card span {
-  color: #4c685d;
-  font-weight: 700;
+  color: #38584f;
+  font-weight: 900;
 }
 
 .resumen-card h2 {
   margin: 14px 0 0;
   font-size: 54px;
-  color: #203b32;
+  color: #223831;
+  font-weight: 900;
 }
 
+/* SECCIONES */
 .seccion {
   margin-top: 28px;
 }
@@ -47,23 +65,38 @@
 .seccion h2 {
   font-size: 38px;
   margin-bottom: 20px;
-  color: #203b32;
+  color: var(--text-main);
+  font-weight: 800;
 }
 
-/* AQUÍ está el cambio clave */
+/* CARDS */
 .grid-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 420px));
-  gap: 18px;
+  gap: 20px;
   align-items: start;
 }
 
 .card {
-  background: #f8fbf8;
-  border-radius: 20px;
-  padding: 20px;
-  box-shadow: 0 10px 30px rgba(31, 60, 48, 0.08);
+  background: linear-gradient(
+    180deg,
+    rgba(246, 255, 248, 0.88),
+    rgba(234, 244, 244, 0.72)
+  );
+  backdrop-filter: blur(14px);
+  border-radius: 24px;
+  padding: 24px;
+  border: 1px solid rgba(107, 144, 128, 0.22);
   border-left: 6px solid #8fb2a0;
+  box-shadow: 0 16px 34px rgba(47, 79, 70, 0.14);
+  transition: all 0.28s ease;
+}
+
+.card:hover {
+  transform: translateY(-7px) scale(1.01);
+  box-shadow: 0 24px 46px rgba(47, 79, 70, 0.22);
+  border-color: rgba(107, 144, 128, 0.4);
+  border-left-color: #6b9080;
 }
 
 .card-header {
@@ -74,30 +107,52 @@
   margin-bottom: 12px;
 }
 
-.card h3 {
+.card h3,
+.card-header h3 {
   margin: 0;
-  color: #203b32;
+  color: #223831;
   font-size: 28px;
   line-height: 1.2;
+  font-weight: 900;
+  flex: 1;
+  min-width: 0;
+  max-width: calc(100% - 120px);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .descripcion {
   margin: 8px 0 14px;
-  color: #4c685d;
+  color: #4f6b61;
   font-size: 16px;
+}
+
+.card .descripcion {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+  line-height: 1.5;
+  min-height: 48px;
 }
 
 .card-detalles p {
   margin: 8px 0;
-  color: #4c685d;
+  color: #4f6b61;
+  font-weight: 700;
 }
 
+/* BADGES */
 .badge {
   padding: 8px 14px;
   border-radius: 999px;
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 900;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .badge-proyecto-activo,
@@ -118,6 +173,7 @@
   color: #1d4ed8;
 }
 
+/* BOTONES ESTADO */
 .acciones-estado {
   display: flex;
   gap: 10px;
@@ -129,14 +185,19 @@
   border: none;
   border-radius: 12px;
   padding: 10px 14px;
-  font-weight: 800;
+  font-weight: 900;
   cursor: pointer;
-  transition: 0.2s ease;
+  transition: 0.25s ease;
+}
+
+.btn-estado:hover {
+  transform: translateY(-2px);
 }
 
 .btn-estado:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
 }
 
 .btn-desarrollo {
@@ -149,12 +210,19 @@
   color: #1d4ed8;
 }
 
+/* MENSAJES */
 .mensaje-info {
-  background: #f8fbf8;
-  border-radius: 16px;
+  background: linear-gradient(
+    180deg,
+    rgba(246, 255, 248, 0.88),
+    rgba(234, 244, 244, 0.72)
+  );
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(107, 144, 128, 0.22);
+  border-radius: 18px;
   padding: 18px;
-  color: #4c685d;
-  font-weight: 700;
+  color: #38584f;
+  font-weight: 900;
 }
 
 .mensaje-error {
@@ -162,35 +230,69 @@
   color: #991b1b;
   border-radius: 16px;
   padding: 18px;
-  font-weight: 700;
+  font-weight: 900;
   margin-bottom: 14px;
 }
 
-/* TÍTULO LARGO CON (...) */
-.card-header h3 {
-  flex: 1;
-  min-width: 0;
-  max-width: calc(100% - 120px);
-
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+/* MODO OSCURO */
+.layout-shell.dark-mode .contenido-ingeniero {
+  background: #0f172a;
 }
 
-/* DESCRIPCIÓN LARGA CON (...) */
-.card .descripcion {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-
-  overflow: hidden;
-  text-overflow: ellipsis;
-  word-break: break-word;
-  line-height: 1.5;
-  min-height: 48px;
+.layout-shell.dark-mode .titulo,
+.layout-shell.dark-mode .subtitulo,
+.layout-shell.dark-mode .seccion h2 {
+  color: #f8fafc !important;
 }
 
-/* PARA QUE EL BADGE NO DAÑE EL TÍTULO */
-.card-header .badge {
-  flex-shrink: 0;
+.layout-shell.dark-mode .resumen-card,
+.layout-shell.dark-mode .card,
+.layout-shell.dark-mode .mensaje-info {
+  background: linear-gradient(
+    180deg,
+    rgba(246, 255, 248, 0.84),
+    rgba(234, 244, 244, 0.72)
+  ) !important;
+  border-color: rgba(246, 255, 248, 0.28) !important;
+  color: #223831 !important;
+}
+
+.layout-shell.dark-mode .resumen-card span,
+.layout-shell.dark-mode .resumen-card h2,
+.layout-shell.dark-mode .card h3,
+.layout-shell.dark-mode .card-header h3,
+.layout-shell.dark-mode .descripcion,
+.layout-shell.dark-mode .card-detalles p,
+.layout-shell.dark-mode .mensaje-info {
+  color: #223831 !important;
+}
+
+.layout-shell.dark-mode .resumen-card:hover,
+.layout-shell.dark-mode .card:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(246, 255, 248, 0.94),
+    rgba(234, 244, 244, 0.84)
+  ) !important;
+  transform: translateY(-7px) scale(1.01);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.3);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .titulo {
+    font-size: 40px;
+  }
+
+  .resumen-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .grid-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .card-header h3 {
+    max-width: calc(100% - 110px);
+  }
 }
