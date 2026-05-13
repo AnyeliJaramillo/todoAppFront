@@ -78,6 +78,13 @@ reporte = {
   totalUsuarios: 0
 };
 
+reporteDetallado: any = {
+  resumen: {},
+  proyectos: [],
+  tareas: [],
+  usuarios: []
+};
+
 tareas: any[] = [];
 usuarios: any[] = [];
 
@@ -136,90 +143,197 @@ cargarUsuarios() {
     });
   }
 
-  generarReporte(): void {
-  if (!this.mesSeleccionado) {
-    this.mostrarNotificacion('Selecciona un mes para generar el reporte', 'error');
-    return;
-  }
-
-  const [anioSeleccionado, mesSeleccionado] = this.mesSeleccionado.split('-').map(Number);
-
-  const proyectosMes = this.proyectos.filter((p: any) => {
-    if (!p.fechaEntrega) return false;
-
-    const fecha = new Date(p.fechaEntrega);
-    const mes = fecha.getMonth() + 1;
-    const anio = fecha.getFullYear();
-
-    return mes === mesSeleccionado && anio === anioSeleccionado;
-  });
-
-  const tareasMes = this.tareas.filter((t: any) => {
-    if (!t.createdAt) return false;
-
-    const fecha = new Date(t.createdAt);
-    const mes = fecha.getMonth() + 1;
-    const anio = fecha.getFullYear();
-
-    return mes === mesSeleccionado && anio === anioSeleccionado;
-  });
-
-  const usuariosMes = this.usuarios.filter((u: any) => {
-    if (!u.createdAt) return false;
-
-    const fecha = new Date(u.createdAt);
-    const mes = fecha.getMonth() + 1;
-    const anio = fecha.getFullYear();
-
-    return mes === mesSeleccionado && anio === anioSeleccionado;
-  });
-
-  this.reporte = {
-    totalProyectos: proyectosMes.length,
-    activos: proyectosMes.filter((p: any) => p.estado === 'Activo').length,
-    finalizados: proyectosMes.filter((p: any) => p.estado === 'Finalizado').length,
-    totalTareas: tareasMes.length,
-    totalUsuarios: usuariosMes.length
-  };
-
-  this.mostrarNotificacion('Reporte generado correctamente', 'success');
-}
-
-exportarExcel(): void {
-  if (!this.mesSeleccionado) {
-    this.mostrarNotificacion('Primero selecciona un mes', 'error');
-    return;
-  }
-
-  this.generarReporte();
-
-  const datos = [
-    {
-      Mes: this.mesSeleccionado,
-      'Total proyectos': this.reporte.totalProyectos,
-      Activos: this.reporte.activos,
-      Finalizados: this.reporte.finalizados,
-      'Total tareas': this.reporte.totalTareas,
-      Usuarios: this.reporte.totalUsuarios
+      generarReporte(): void {
+    if (!this.mesSeleccionado) {
+      this.mostrarNotificacion('Selecciona un mes para generar el reporte', 'error');
+      return;
     }
-  ];
 
-  const worksheet = XLSX.utils.json_to_sheet(datos);
-  const workbook = XLSX.utils.book_new();
+    const [anioSeleccionado, mesSeleccionado] = this.mesSeleccionado.split('-').map(Number);
 
-  XLSX.utils.book_append_sheet(workbook, worksheet, 'Reporte');
+    const perteneceAlMes = (fechaValor: any): boolean => {
+      if (!fechaValor) return false;
 
-  const excelBuffer = XLSX.write(workbook, {
-    bookType: 'xlsx',
-    type: 'array'
-  });
+      const fecha = new Date(fechaValor);
+      return (
+        fecha.getMonth() + 1 === mesSeleccionado &&
+        fecha.getFullYear() === anioSeleccionado
+      );
+    };
 
-  const archivo = new Blob([excelBuffer], {
-    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-  });
+    const obtenerId = (valor: any): string => {
+      if (!valor) return '';
+      if (typeof valor === 'string') return valor;
+      return valor._id || valor.id || '';
+    };
 
-  saveAs(archivo, `reporte-${this.mesSeleccionado}.xlsx`);
-}
+    const obtenerUsuario = (idUsuario: any): any => {
+      const id = obtenerId(idUsuario);
+      return this.usuarios.find((u: any) => obtenerId(u) === id);
+    };
+
+    const obtenerProyecto = (idProyecto: any): any => {
+      const id = obtenerId(idProyecto);
+      return this.proyectos.find((p: any) => obtenerId(p) === id);
+    };
+
+    const proyectosCreadosMes = this.proyectos.filter((p: any) =>
+      perteneceAlMes(p.createdAt)
+    );
+
+    const proyectosEntregaMes = this.proyectos.filter((p: any) =>
+      perteneceAlMes(p.fechaEntrega)
+    );
+
+    const tareasCreadasMes = this.tareas.filter((t: any) =>
+      perteneceAlMes(t.createdAt)
+    );
+
+    const usuariosCreadosMes = this.usuarios.filter((u: any) =>
+      perteneceAlMes(u.createdAt)
+    );
+
+    const proyectosDetallados = proyectosCreadosMes.map((proyecto: any) => {
+      const tareasProyecto = this.tareas.filter((t: any) =>
+        obtenerId(t.proyecto) === obtenerId(proyecto)
+      );
+
+      const ingenieroProyecto =
+        obtenerUsuario(proyecto.ingenieroAsignado) ||
+        obtenerUsuario(tareasProyecto[0]?.ingenieroAsignado);
+
+      return {
+        nombre: proyecto.nombre || 'Sin nombre',
+        descripcion: proyecto.descripcion || 'Sin descripción',
+        estado: proyecto.estado || 'Sin estado',
+        prioridad: proyecto.prioridad || 'Sin prioridad',
+        fechaCreacion: proyecto.createdAt || 'Sin fecha',
+        fechaEntrega: proyecto.fechaEntrega || 'Sin fecha',
+        ingeniero: ingenieroProyecto?.nombre || 'Sin asignar',
+        totalTareas: tareasProyecto.length,
+        tareas: tareasProyecto.map((t: any) => {
+          const ingenieroTarea = obtenerUsuario(t.ingenieroAsignado);
+
+          return {
+            titulo: t.titulo || 'Sin título',
+            descripcion: t.descripcion || 'Sin descripción',
+            estado: t.estado || 'Sin estado',
+            prioridad: t.prioridad || 'Sin prioridad',
+            ingeniero: ingenieroTarea?.nombre || 'Sin asignar',
+            fechaCreacion: t.createdAt || 'Sin fecha'
+          };
+        })
+      };
+    });
+
+    const tareasDetalladas = tareasCreadasMes.map((t: any) => {
+      const proyecto = obtenerProyecto(t.proyecto);
+      const ingeniero = obtenerUsuario(t.ingenieroAsignado);
+
+      return {
+        titulo: t.titulo || 'Sin título',
+        descripcion: t.descripcion || 'Sin descripción',
+        proyecto: proyecto?.nombre || 'Sin proyecto',
+        ingeniero: ingeniero?.nombre || 'Sin asignar',
+        estado: t.estado || 'Sin estado',
+        prioridad: t.prioridad || 'Sin prioridad',
+        fechaCreacion: t.createdAt || 'Sin fecha'
+      };
+    });
+
+    const usuariosDetallados = usuariosCreadosMes.map((u: any) => ({
+      nombre: u.nombre || 'Sin nombre',
+      correo: u.correo || 'Sin correo',
+      rol: u.rol || 'Sin rol',
+      estado: u.activo === false ? 'Inactivo' : 'Activo',
+      fechaCreacion: u.createdAt || 'Sin fecha'
+    }));
+
+    this.reporte = {
+      totalProyectos: proyectosCreadosMes.length,
+      activos: proyectosCreadosMes.filter((p: any) => p.estado === 'Activo').length,
+      finalizados: proyectosCreadosMes.filter((p: any) => p.estado === 'Finalizado').length,
+      totalTareas: tareasCreadasMes.length,
+      totalUsuarios: usuariosCreadosMes.length
+    };
+
+    this.reporteDetallado = {
+      resumen: {
+        mes: this.mesSeleccionado,
+        fechaGeneracion: new Date().toLocaleDateString(),
+        proyectosCreados: proyectosCreadosMes.length,
+        proyectosEntregaMes: proyectosEntregaMes.length,
+        proyectosActivos: proyectosCreadosMes.filter((p: any) => p.estado === 'Activo').length,
+        proyectosEnEspera: proyectosCreadosMes.filter((p: any) => p.estado === 'En espera').length,
+        proyectosFinalizados: proyectosCreadosMes.filter((p: any) => p.estado === 'Finalizado').length,
+        tareasCreadas: tareasCreadasMes.length,
+        usuariosCreados: usuariosCreadosMes.length
+      },
+      proyectosCreados: proyectosDetallados,
+      proyectosEntregaMes: proyectosEntregaMes.map((p: any) => ({
+        nombre: p.nombre || 'Sin nombre',
+        estado: p.estado || 'Sin estado',
+        prioridad: p.prioridad || 'Sin prioridad',
+        fechaEntrega: p.fechaEntrega || 'Sin fecha'
+      })),
+      tareasCreadas: tareasDetalladas,
+      usuariosCreados: usuariosDetallados
+    };
+
+    this.mostrarNotificacion('Reporte generado correctamente', 'success');
+  }
+
+  exportarExcel(): void {
+    if (!this.mesSeleccionado) {
+      this.mostrarNotificacion('Primero selecciona un mes', 'error');
+      return;
+    }
+
+    this.generarReporte();
+
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(
+      workbook,
+      XLSX.utils.json_to_sheet([this.reporteDetallado.resumen]),
+      'Resumen'
+    );
+
+    XLSX.utils.book_append_sheet(
+      workbook,
+      XLSX.utils.json_to_sheet(this.reporteDetallado.proyectosCreados),
+      'Proyectos creados'
+    );
+
+    XLSX.utils.book_append_sheet(
+      workbook,
+      XLSX.utils.json_to_sheet(this.reporteDetallado.proyectosEntregaMes),
+      'Entregas del mes'
+    );
+
+    XLSX.utils.book_append_sheet(
+      workbook,
+      XLSX.utils.json_to_sheet(this.reporteDetallado.tareasCreadas),
+      'Tareas creadas'
+    );
+
+    XLSX.utils.book_append_sheet(
+      workbook,
+      XLSX.utils.json_to_sheet(this.reporteDetallado.usuariosCreados),
+      'Usuarios creados'
+    );
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array'
+    });
+
+    const archivo = new Blob([excelBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    });
+
+    saveAs(archivo, `reporte-mensual-actividad-${this.mesSeleccionado}.xlsx`);
+  }
 
 exportarPDF(): void {
   if (!this.mesSeleccionado) {
@@ -229,33 +343,118 @@ exportarPDF(): void {
 
   this.generarReporte();
 
-  const doc = new jsPDF();
+  const doc = new jsPDF('landscape');
 
   doc.setFontSize(18);
-  doc.text('Reporte mensual', 14, 20);
+  doc.text('Reporte mensual de actividad - TodoAppDev', 14, 18);
 
   doc.setFontSize(11);
-  doc.text(`Mes: ${this.mesSeleccionado}`, 14, 30);
+  doc.text(`Mes: ${this.reporteDetallado.resumen.mes}`, 14, 28);
+  doc.text(`Fecha de generación: ${this.reporteDetallado.resumen.fechaGeneracion}`, 14, 35);
 
   autoTable(doc, {
-    startY: 40,
+    startY: 45,
     head: [[
-      'Total proyectos',
+      'Proyectos creados',
+      'Entregas del mes',
       'Activos',
+      'En espera',
       'Finalizados',
-      'Total tareas',
-      'Usuarios'
+      'Tareas creadas',
+      'Usuarios creados'
     ]],
     body: [[
-      this.reporte.totalProyectos,
-      this.reporte.activos,
-      this.reporte.finalizados,
-      this.reporte.totalTareas,
-      this.reporte.totalUsuarios
+      this.reporteDetallado.resumen.proyectosCreados,
+      this.reporteDetallado.resumen.proyectosEntregaMes,
+      this.reporteDetallado.resumen.proyectosActivos,
+      this.reporteDetallado.resumen.proyectosEnEspera,
+      this.reporteDetallado.resumen.proyectosFinalizados,
+      this.reporteDetallado.resumen.tareasCreadas,
+      this.reporteDetallado.resumen.usuariosCreados
     ]]
   });
 
-  doc.save(`reporte-${this.mesSeleccionado}.pdf`);
+  autoTable(doc, {
+    startY: (doc as any).lastAutoTable.finalY + 12,
+    head: [[
+      'Proyecto',
+      'Descripción',
+      'Estado',
+      'Prioridad',
+      'Fecha creación',
+      'Fecha entrega',
+      'Ingeniero',
+      'Total tareas'
+    ]],
+    body: this.reporteDetallado.proyectosCreados.map((p: any) => [
+      p.nombre,
+      p.descripcion,
+      p.estado,
+      p.prioridad,
+      p.fechaCreacion,
+      p.fechaEntrega,
+      p.ingeniero,
+      p.totalTareas
+    ])
+  });
+
+  autoTable(doc, {
+    startY: (doc as any).lastAutoTable.finalY + 12,
+    head: [[
+      'Proyecto con entrega',
+      'Estado',
+      'Prioridad',
+      'Fecha entrega'
+    ]],
+    body: this.reporteDetallado.proyectosEntregaMes.map((p: any) => [
+      p.nombre,
+      p.estado,
+      p.prioridad,
+      p.fechaEntrega
+    ])
+  });
+
+  autoTable(doc, {
+    startY: (doc as any).lastAutoTable.finalY + 12,
+    head: [[
+      'Tarea',
+      'Descripción',
+      'Proyecto',
+      'Ingeniero',
+      'Estado',
+      'Prioridad',
+      'Fecha creación'
+    ]],
+    body: this.reporteDetallado.tareasCreadas.map((t: any) => [
+      t.titulo,
+      t.descripcion,
+      t.proyecto,
+      t.ingeniero,
+      t.estado,
+      t.prioridad,
+      t.fechaCreacion
+    ])
+  });
+
+  autoTable(doc, {
+    startY: (doc as any).lastAutoTable.finalY + 12,
+    head: [[
+      'Usuario',
+      'Correo',
+      'Rol',
+      'Estado',
+      'Fecha creación'
+    ]],
+    body: this.reporteDetallado.usuariosCreados.map((u: any) => [
+      u.nombre,
+      u.correo,
+      u.rol,
+      u.estado,
+      u.fechaCreacion
+    ])
+  });
+
+  doc.save(`reporte-mensual-actividad-${this.mesSeleccionado}.pdf`);
 }
 
   cargarIngenieros(): void {
