@@ -10,15 +10,18 @@
 
         <div class="perfil-info">
           <h3>{{ usuario?.nombre || 'Usuario' }}</h3>
-          <p>
-            {{ esAdmin ? 'DevHooked' : 'Ingeniero' }}
-          </p>
+          <p>{{ esAdmin ? 'DevHooked' : 'Ingeniero' }}</p>
         </div>
-      </div>
 
-      <button class="modo-btn" (click)="toggleModoOscuro()">
-        {{ modoOscuro ? ' Modo claro' : ' Modo oscuro' }}
-      </button>
+        <button
+          class="modo-mini-btn"
+          type="button"
+          (click)="toggleModoOscuro()"
+          [attr.title]="modoOscuro ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'"
+        >
+          {{ modoOscuro ? '☀️' : '🌙' }}
+        </button>
+      </div>
 
       <nav class="menu">
         <!-- ADMIN -->
@@ -32,15 +35,27 @@
             Inicio
           </button>
 
-          <button class="menu-btn" routerLink="/proyectos" routerLinkActive="activo">
+          <button
+            class="menu-btn"
+            routerLink="/proyectos"
+            routerLinkActive="activo"
+          >
             Proyectos
           </button>
 
-          <button class="menu-btn" routerLink="/tareas" routerLinkActive="activo">
+          <button
+            class="menu-btn"
+            routerLink="/tareas"
+            routerLinkActive="activo"
+          >
             Tareas
           </button>
 
-          <button class="menu-btn" routerLink="/usuarios" routerLinkActive="activo">
+          <button
+            class="menu-btn"
+            routerLink="/usuarios"
+            routerLinkActive="activo"
+          >
             Usuarios
           </button>
         </ng-container>
@@ -73,7 +88,7 @@
           </button>
         </ng-container>
 
-        <button class="menu-btn salir" (click)="logout()">
+        <button class="menu-btn salir" type="button" (click)="logout()">
           Cerrar sesión
         </button>
       </nav>

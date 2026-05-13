@@ -6,7 +6,10 @@ import { Router, RouterModule } from '@angular/router';
 import { Proyecto } from '../proyectos/proyecto.interface';
 import { ProyectosService } from '../proyectos/proyectos.service';
 import { environment } from '../../../environments/environment';
-
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 @Component({
   selector: 'app-admin',
@@ -132,41 +135,129 @@ cargarUsuarios() {
       }
     });
   }
-generarReporte() {
 
-  if (!this.mesSeleccionado) return;
+  generarReporte(): void {
+  if (!this.mesSeleccionado) {
+    this.mostrarNotificacion('Selecciona un mes para generar el reporte', 'error');
+    return;
+  }
 
-  const mes = new Date(this.mesSeleccionado).getMonth();
-  const anio = new Date(this.mesSeleccionado).getFullYear();
+  const [anioSeleccionado, mesSeleccionado] = this.mesSeleccionado.split('-').map(Number);
 
-  // PROYECTOS
-  const proyectosMes = this.proyectos.filter(p => {
+  const proyectosMes = this.proyectos.filter((p: any) => {
+    if (!p.fechaEntrega) return false;
+
     const fecha = new Date(p.fechaEntrega);
-    return fecha.getMonth() === mes && fecha.getFullYear() === anio;
+    const mes = fecha.getMonth() + 1;
+    const anio = fecha.getFullYear();
+
+    return mes === mesSeleccionado && anio === anioSeleccionado;
   });
 
-  this.reporte.totalProyectos = proyectosMes.length;
+  const tareasMes = this.tareas.filter((t: any) => {
+    if (!t.createdAt) return false;
 
-  this.reporte.activos = proyectosMes.filter(p => p.estado === 'Activo').length;
+    const fecha = new Date(t.createdAt);
+    const mes = fecha.getMonth() + 1;
+    const anio = fecha.getFullYear();
 
-  this.reporte.finalizados = proyectosMes.filter(p => p.estado === 'Finalizado').length;
-
-  // TAREAS
-  const tareasMes = this.tareas.filter(t => {
-    const fecha = new Date(t.createdAt || new Date());
-    return fecha.getMonth() === mes && fecha.getFullYear() === anio;
+    return mes === mesSeleccionado && anio === anioSeleccionado;
   });
 
-  this.reporte.totalTareas = tareasMes.length;
+  const usuariosMes = this.usuarios.filter((u: any) => {
+    if (!u.createdAt) return false;
 
-  // USUARIOS
-  const usuariosMes = this.usuarios.filter(u => {
-    const fecha = new Date(u.createdAt || new Date());
-    return fecha.getMonth() === mes && fecha.getFullYear() === anio;
+    const fecha = new Date(u.createdAt);
+    const mes = fecha.getMonth() + 1;
+    const anio = fecha.getFullYear();
+
+    return mes === mesSeleccionado && anio === anioSeleccionado;
   });
 
-  this.reporte.totalUsuarios = usuariosMes.length;
+  this.reporte = {
+    totalProyectos: proyectosMes.length,
+    activos: proyectosMes.filter((p: any) => p.estado === 'Activo').length,
+    finalizados: proyectosMes.filter((p: any) => p.estado === 'Finalizado').length,
+    totalTareas: tareasMes.length,
+    totalUsuarios: usuariosMes.length
+  };
+
+  this.mostrarNotificacion('Reporte generado correctamente', 'success');
 }
+
+exportarExcel(): void {
+  if (!this.mesSeleccionado) {
+    this.mostrarNotificacion('Primero selecciona un mes', 'error');
+    return;
+  }
+
+  this.generarReporte();
+
+  const datos = [
+    {
+      Mes: this.mesSeleccionado,
+      'Total proyectos': this.reporte.totalProyectos,
+      Activos: this.reporte.activos,
+      Finalizados: this.reporte.finalizados,
+      'Total tareas': this.reporte.totalTareas,
+      Usuarios: this.reporte.totalUsuarios
+    }
+  ];
+
+  const worksheet = XLSX.utils.json_to_sheet(datos);
+  const workbook = XLSX.utils.book_new();
+
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Reporte');
+
+  const excelBuffer = XLSX.write(workbook, {
+    bookType: 'xlsx',
+    type: 'array'
+  });
+
+  const archivo = new Blob([excelBuffer], {
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+  });
+
+  saveAs(archivo, `reporte-${this.mesSeleccionado}.xlsx`);
+}
+
+exportarPDF(): void {
+  if (!this.mesSeleccionado) {
+    this.mostrarNotificacion('Primero selecciona un mes', 'error');
+    return;
+  }
+
+  this.generarReporte();
+
+  const doc = new jsPDF();
+
+  doc.setFontSize(18);
+  doc.text('Reporte mensual', 14, 20);
+
+  doc.setFontSize(11);
+  doc.text(`Mes: ${this.mesSeleccionado}`, 14, 30);
+
+  autoTable(doc, {
+    startY: 40,
+    head: [[
+      'Total proyectos',
+      'Activos',
+      'Finalizados',
+      'Total tareas',
+      'Usuarios'
+    ]],
+    body: [[
+      this.reporte.totalProyectos,
+      this.reporte.activos,
+      this.reporte.finalizados,
+      this.reporte.totalTareas,
+      this.reporte.totalUsuarios
+    ]]
+  });
+
+  doc.save(`reporte-${this.mesSeleccionado}.pdf`);
+}
+
   cargarIngenieros(): void {
     this.http.get<any>(`${this.apiUrl}/usuarios`).subscribe({
       next: (respuesta) => {
@@ -369,4 +460,7 @@ generarReporte() {
         return '';
     }
   }
+
+
 }
+

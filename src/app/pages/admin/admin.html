@@ -44,8 +44,7 @@
 <!-- REPORTE MENSUAL -->
 <!-- ===================== -->
 
-
-  <div class="modal-fondo" *ngIf="mostrarReporte">
+<div class="modal-fondo" *ngIf="mostrarReporte">
   <div class="modal">
 
     <h2>Reporte mensual</h2>
@@ -55,13 +54,42 @@
       <input type="month" [(ngModel)]="mesSeleccionado" />
     </div>
 
-    <div class="acciones-modal">
-      <button class="btn-guardar" (click)="generarReporte()">
+    <div class="acciones-modal acciones-reporte">
+
+      <button
+        class="btn-guardar"
+        type="button"
+        (click)="generarReporte()"
+      >
         Generar reporte
       </button>
-      <button class="btn-cancelar" (click)="cerrarReporte()">
+
+        <button
+        class="btn-guardar btn-excel"
+        type="button"
+        (click)="exportarExcel()"
+        [disabled]="!mesSeleccionado"
+      >
+        Exportar Excel
+      </button>
+
+      <button
+        class="btn-guardar btn-pdf"
+        type="button"
+        (click)="exportarPDF()"
+        [disabled]="!mesSeleccionado"
+      >
+        Exportar PDF
+      </button>
+
+      <button
+        class="btn-cancelar"
+        type="button"
+        (click)="cerrarReporte()"
+      >
         Cerrar
       </button>
+
     </div>
 
     <!-- RESULTADOS -->

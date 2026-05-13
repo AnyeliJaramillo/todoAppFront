@@ -22,11 +22,48 @@
   overflow-y: auto;
 }
 
-/* CONTENEDOR SUPERIOR */
+/* CONTENEDOR SUPERIOR DE ACCIONES*/
 .sidebar > div:first-child {
   display: flex;
   flex-direction: column;
   flex: 1;
+}
+
+.acciones-reporte {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.acciones-reporte button {
+  min-width: 145px;
+}
+
+.btn-excel {
+  background: #217346 !important;
+  color: white !important;
+}
+
+.btn-pdf {
+  background: #dc2626 !important;
+  color: white !important;
+}
+
+.btn-excel:hover {
+  background: #185c37 !important;
+  transform: translateY(-2px);
+}
+
+.btn-pdf:hover {
+  background: #b91c1c !important;
+  transform: translateY(-2px);
+}
+
+.btn-excel:disabled,
+.btn-pdf:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* LOGO */
@@ -81,18 +118,46 @@
 }
 
 /* BOTÓN MODO OSCURO */
-.modo-btn {
-  width: 100%;
-  padding: 12px 14px;
+.perfil {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.perfil-info {
+  flex: 1;
+}
+
+.modo-mini-btn {
+  position: absolute;
+  right: 14px;
+  bottom: 12px;
+
+  width: 32px;
+  height: 32px;
+
   border: none;
-  border-radius: 12px;
-  background: rgba(246, 255, 248, 0.18);
-  color: var(--color-white-soft);
-  font-size: 14px;
-  font-weight: 800;
+  border-radius: 50%;
+
   cursor: pointer;
-  margin-bottom: 18px;
-  transition: all 0.2s ease;
+
+  font-size: 15px;
+
+  background: rgba(255, 255, 255, 0.15);
+
+  color: var(--color-white-soft);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: all 0.25s ease;
+}
+
+.modo-mini-btn:hover {
+  transform: scale(1.08);
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .modo-btn:hover {
