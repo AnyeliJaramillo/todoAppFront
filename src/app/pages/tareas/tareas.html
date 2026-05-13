@@ -15,16 +15,16 @@
       <h1>Tareas</h1>
       <p>Gestiona las tareas y asígnalas a proyectos e ingenieros</p>
     </div>
-
-    <button class="btn-nuevo" (click)="abrirModal()">
-      + Crear tarea
-    </button>
-<input
+    <input
   type="text"
   class="buscador-tareas"
   placeholder="Buscar tareas..."
   [(ngModel)]="busqueda"
 />
+
+    <button class="btn-nuevo" (click)="abrirModal()">
+      + Crear tarea
+    </button>
   </div>
 
   <div *ngIf="cargando" class="mensaje-panel">
