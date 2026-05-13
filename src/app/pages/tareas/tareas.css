@@ -564,8 +564,8 @@
   border-radius: 16px;
 }
 .buscador-tareas {
-  width: 320px;
-  padding: 16px 20px;
+  width: 100%;
+  max-width: 420px;
   border-radius: 18px;
   border: none;
   outline: none;
@@ -574,7 +574,10 @@
   font-size: 16px;
   margin: 20px 0 28px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  display: block;
+margin: 18px 0 28px;
 }
+
 
 .buscador-tareas::placeholder {
   color: #6b8b7d;
