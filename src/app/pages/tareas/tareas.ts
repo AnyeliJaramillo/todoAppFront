@@ -18,6 +18,7 @@ export class Tareas implements OnInit {
   tareas: any[] = [];
   proyectos: any[] = [];
   ingenieros: any[] = [];
+  busqueda = '';
 
   cargando = false;
   mostrarModal = false;
@@ -272,6 +273,20 @@ export class Tareas implements OnInit {
         return '';
     }
   }
+  get tareasFiltradas() {
+  const texto = this.busqueda.toLowerCase().trim();
+
+  if (!texto) {
+    return this.tareas;
+  }
+
+  return this.tareas.filter(t =>
+    t.titulo?.toLowerCase().includes(texto) ||
+    t.descripcion?.toLowerCase().includes(texto) ||
+    t.proyecto?.nombre?.toLowerCase().includes(texto) ||
+    t.ingenieroAsignado?.nombre?.toLowerCase().includes(texto)
+  );
+}
 
   mostrarNotificacion(texto: string, tipo: 'success' | 'error'): void {
   this.mensaje = texto;

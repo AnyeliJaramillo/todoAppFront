@@ -563,6 +563,22 @@
   padding: 13px 34px;
   border-radius: 16px;
 }
+.buscador-tareas {
+  width: 320px;
+  padding: 16px 20px;
+  border-radius: 18px;
+  border: none;
+  outline: none;
+  background: #f4faf4;
+  color: #355248;
+  font-size: 16px;
+  margin: 20px 0 28px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+.buscador-tareas::placeholder {
+  color: #6b8b7d;
+}
 
 /* MODO OSCURO */
 .layout-shell.dark-mode .modal-fondo .modal:has(.campo p) {

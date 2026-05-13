@@ -19,6 +19,13 @@
     <button class="btn-nuevo" (click)="abrirModal()">
       + Crear tarea
     </button>
+<input
+  type="text"
+  class="buscador-tareas"
+  placeholder="Buscar tareas..."
+  [(ngModel)]="busqueda"
+/>
+
   </div>
 
   <div *ngIf="cargando" class="mensaje-panel">
