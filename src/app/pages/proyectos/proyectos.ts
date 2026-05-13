@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { TareasService } from '../tareas/tareas.service';
 import { ProyectosService } from './proyectos.service';
 import Swal from 'sweetalert2';
 
@@ -20,6 +21,9 @@ export class ProyectosComponent implements OnInit {
   proyectos: any[] = [];
   proyectosFiltrados: any[] = [];
   ingenieros: any[] = [];
+
+  tareas: any[] = [];
+  tareasProyectoSeleccionado: any[] = [];
 
   cargando = false;
   mostrarModal = false;
@@ -52,14 +56,16 @@ export class ProyectosComponent implements OnInit {
   };
 
   constructor(
-    private proyectosService: ProyectosService,
-    private cdRef: ChangeDetectorRef,
-    private router: Router
-  ) {}
+  private proyectosService: ProyectosService,
+  private tareasService: TareasService,
+  private cdRef: ChangeDetectorRef,
+  private router: Router
+) {}
 
   ngOnInit(): void {
     this.cargarProyectos();
     this.cargarIngenieros();
+    this.cargarTareas();
   }
 
   irAInicio(): void {
@@ -120,6 +126,24 @@ export class ProyectosComponent implements OnInit {
     );
   }
 
+  cargarTareas(): void {
+  this.tareasService.getTareas().subscribe({
+    next: (respuesta: any) => {
+      const lista = Array.isArray(respuesta)
+        ? respuesta
+        : Array.isArray(respuesta?.data)
+          ? respuesta.data
+          : [];
+
+      this.tareas = lista;
+      this.cdRef.detectChanges();
+    },
+    error: (error) => {
+      console.error('Error al cargar tareas', error);
+    }
+  });
+}
+
   abrirModalNuevo(): void {
     this.modoEdicion = false;
     this.proyectoEditandoId = '';
@@ -141,6 +165,18 @@ proyectoSeleccionado: any = null;
 
 abrirModalVer(proyecto: any): void {
   this.proyectoSeleccionado = proyecto;
+
+  this.tareasProyectoSeleccionado = this.tareas.filter(
+    (tarea: any) => {
+      const proyectoId =
+        typeof tarea.proyecto === 'object'
+          ? tarea.proyecto._id
+          : tarea.proyecto;
+
+      return proyectoId === proyecto._id;
+    }
+  );
+
   this.mostrarModalVer = true;
 }
 

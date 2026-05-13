@@ -1,6 +1,13 @@
 <div class="contenido-ingeniero">
-  <h1 class="titulo">Panel del ingeniero</h1>
-  <p class="subtitulo">Resumen de la información asignada</p>
+  <div class="encabezado-ingeniero">
+    <div>
+      <span class="etiqueta-panel">Panel del ingeniero</span>
+      <h1 class="titulo">Resumen de actividades</h1>
+      <p class="subtitulo">
+        Consulta tus proyectos, tareas asignadas y actualiza el estado de tu trabajo.
+      </p>
+    </div>
+  </div>
 
   <div *ngIf="errorMensaje" class="mensaje-error">
     {{ errorMensaje }}
@@ -10,16 +17,23 @@
     <div class="resumen-card">
       <span>Total de tareas</span>
       <h2>{{ tareas.length }}</h2>
+      <p>Tareas asignadas actualmente</p>
     </div>
 
     <div class="resumen-card">
       <span>Total de proyectos</span>
       <h2>{{ proyectos.length }}</h2>
+      <p>Proyectos vinculados a tu perfil</p>
     </div>
   </div>
 
   <div class="seccion" *ngIf="vistaActual === 'inicio' || vistaActual === 'proyectos'">
-    <h2>Mis proyectos</h2>
+    <div class="seccion-header">
+      <div>
+        <span class="seccion-label">Proyectos</span>
+        <h2>Mis proyectos</h2>
+      </div>
+    </div>
 
     <div *ngIf="cargandoProyectos" class="mensaje-info">
       Cargando proyectos...
@@ -32,7 +46,10 @@
     <div class="grid-cards" *ngIf="!cargandoProyectos && proyectos.length > 0">
       <div class="card" *ngFor="let proyecto of proyectos">
         <div class="card-header">
-          <h3>{{ proyecto.nombre }}</h3>
+          <div>
+            <h3>{{ proyecto.nombre }}</h3>
+            <p class="card-subtitle">Proyecto asignado</p>
+          </div>
 
           <span class="badge" [ngClass]="claseEstadoProyecto(proyecto.estado)">
             {{ proyecto.estado }}
@@ -42,13 +59,21 @@
         <p class="descripcion">{{ proyecto.descripcion }}</p>
 
         <div class="card-detalles">
-          <p><strong>Prioridad:</strong> {{ proyecto.prioridad }}</p>
-          <p><strong>Entrega:</strong> {{ proyecto.fechaEntrega | date:'dd/MM/yyyy' }}</p>
+          <div>
+            <span>Prioridad</span>
+            <strong>{{ proyecto.prioridad }}</strong>
+          </div>
+
+          <div>
+            <span>Entrega</span>
+            <strong>{{ proyecto.fechaEntrega | date:'dd/MM/yyyy' }}</strong>
+          </div>
         </div>
 
         <div class="acciones-estado">
           <button
             class="btn-estado btn-desarrollo"
+            type="button"
             (click)="actualizarEstadoProyecto(proyecto, 'Activo')"
             [disabled]="proyecto.estado === 'Activo' || cargandoAccion"
           >
@@ -57,6 +82,7 @@
 
           <button
             class="btn-estado btn-finalizado"
+            type="button"
             (click)="actualizarEstadoProyecto(proyecto, 'Finalizado')"
             [disabled]="proyecto.estado === 'Finalizado' || cargandoAccion"
           >
@@ -68,7 +94,12 @@
   </div>
 
   <div class="seccion" *ngIf="vistaActual === 'inicio' || vistaActual === 'tareas'">
-    <h2>Mis tareas</h2>
+    <div class="seccion-header">
+      <div>
+        <span class="seccion-label">Tareas</span>
+        <h2>Mis tareas</h2>
+      </div>
+    </div>
 
     <div *ngIf="cargandoTareas" class="mensaje-info">
       Cargando tareas...
@@ -81,7 +112,12 @@
     <div class="grid-cards" *ngIf="!cargandoTareas && tareas.length > 0">
       <div class="card" *ngFor="let tarea of tareas">
         <div class="card-header">
-          <h3>{{ tarea.titulo }}</h3>
+          <div>
+            <h3>{{ tarea.titulo }}</h3>
+            <p class="card-subtitle">
+              {{ tarea.proyecto?.nombre || 'Sin proyecto asociado' }}
+            </p>
+          </div>
 
           <span class="badge" [ngClass]="claseEstadoTarea(tarea.estado)">
             {{ tarea.estado }}
@@ -91,13 +127,21 @@
         <p class="descripcion">{{ tarea.descripcion }}</p>
 
         <div class="card-detalles">
-          <p><strong>Proyecto:</strong> {{ tarea.proyecto?.nombre }}</p>
-          <p><strong>Prioridad:</strong> {{ tarea.prioridad }}</p>
+          <div>
+            <span>Proyecto</span>
+            <strong>{{ tarea.proyecto?.nombre || 'Sin proyecto' }}</strong>
+          </div>
+
+          <div>
+            <span>Prioridad</span>
+            <strong>{{ tarea.prioridad }}</strong>
+          </div>
         </div>
 
         <div class="acciones-estado">
           <button
             class="btn-estado btn-desarrollo"
+            type="button"
             (click)="actualizarEstadoTarea(tarea, 'En progreso')"
             [disabled]="tarea.estado === 'En progreso' || cargandoAccion"
           >
@@ -106,6 +150,7 @@
 
           <button
             class="btn-estado btn-finalizado"
+            type="button"
             (click)="actualizarEstadoTarea(tarea, 'Finalizada')"
             [disabled]="tarea.estado === 'Finalizada' || cargandoAccion"
           >

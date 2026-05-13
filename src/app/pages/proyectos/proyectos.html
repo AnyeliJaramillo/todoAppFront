@@ -144,6 +144,58 @@
       <p>{{ proyectoSeleccionado?.fechaEntrega | date:'dd/MM/yyyy' }}</p>
     </div>
 
+    <div class="campo tareas-asociadas">
+  <label>Tareas asociadas</label>
+
+  <div
+    *ngIf="tareasProyectoSeleccionado.length === 0"
+    class="mensaje-info"
+  >
+    Este proyecto no tiene tareas asociadas.
+  </div>
+
+  <div
+    class="lista-tareas-modal"
+    *ngIf="tareasProyectoSeleccionado.length > 0"
+  >
+
+    <div
+      class="tarea-modal-card"
+      *ngFor="let tarea of tareasProyectoSeleccionado"
+    >
+      <div class="tarea-header">
+        <h4>{{ tarea.titulo }}</h4>
+
+        <span
+          class="tag"
+          [ngClass]="claseEstado(tarea.estado)"
+        >
+          {{ tarea.estado }}
+        </span>
+      </div>
+
+      <p>{{ tarea.descripcion }}</p>
+
+      <div class="tarea-detalles">
+        <span>
+          <strong>Prioridad:</strong>
+          {{ tarea.prioridad }}
+        </span>
+
+        <span>
+          <strong>Ingeniero:</strong>
+
+          {{
+            tarea.ingenieroAsignado?.nombre ||
+            obtenerNombreIngeniero(tarea.ingenieroAsignado)
+          }}
+        </span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
     <div class="acciones-modal">
       <button class="btn-cancelar" (click)="cerrarModalVer()">Cerrar</button>
     </div>
