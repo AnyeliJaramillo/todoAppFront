@@ -1,59 +1,224 @@
-# TodoAppFront
+# 🎨 TodoAppFront
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.3.
+Frontend del sistema de gestión de proyectos y tareas **TodoAppDev**, desarrollado con Angular 21 y TailwindCSS.
 
-## Development server
+La aplicación permite administrar proyectos, usuarios y tareas mediante una interfaz moderna, dinámica y responsive.
 
-To start a local development server, run:
+---
+
+# 🌐 Proyecto desplegado
+
+Frontend desplegado en:
+
+- Vercel
+
+---
+
+# 🚀 Tecnologías utilizadas
+
+- Angular 21
+- TypeScript
+- TailwindCSS
+- HTML5
+- CSS3
+- Vercel
+
+---
+
+# ✨ Funcionalidades principales
+
+## 🔐 Sistema de autenticación
+
+- Inicio de sesión
+- Cierre de sesión
+- Protección de rutas
+- Manejo de sesiones
+
+---
+
+## 👥 Gestión de usuarios
+
+- Crear usuarios
+- Editar usuarios
+- Eliminar usuarios
+- Roles:
+  - Administrador
+  - Ingeniero
+
+---
+
+## 📁 Gestión de proyectos
+
+- Crear proyectos
+- Editar proyectos
+- Eliminar proyectos
+- Dashboard dinámico
+- Visualización de proyectos recientes
+
+---
+
+## ✅ Gestión de tareas
+
+- Crear tareas
+- Asignar tareas
+- Cambio de estados
+- Prioridades visuales:
+  - 🔴 Alta
+  - 🟡 Media
+  - 🟢 Baja
+
+---
+
+## 📊 Reportes
+
+- Reportes mensuales
+- Exportación PDF
+- Exportación Excel
+
+---
+
+# 🎨 Diseño e interfaz
+
+- Dark Mode
+- Diseño responsive
+- Animaciones dinámicas
+- Toast notifications
+- Modales interactivos
+- Dashboard moderno
+
+---
+
+# 📁 Arquitectura del proyecto
+
+```txt
+todo-app-front/
+ ├── src/
+ ├── public/
+ ├── angular.json
+ ├── package.json
+ ├── tailwind.config.js
+ └── .gitignore
+```
+
+---
+
+# ⚙️ Instalación del proyecto
+
+Clonar repositorio:
+
+```bash
+git clone https://github.com/AnyeliJaramillo/todoAppFront.git
+```
+
+Entrar al proyecto:
+
+```bash
+cd todo-app-front
+```
+
+Instalar dependencias:
+
+```bash
+npm install
+```
+
+---
+
+# ▶️ Ejecutar aplicación
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Aplicación local:
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+```txt
+http://localhost:4200
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+La aplicación se recargará automáticamente al modificar archivos del proyecto.
 
-```bash
-ng generate --help
-```
+---
 
-## Building
-
-To build the project run:
+# 🏗️ Compilar proyecto
 
 ```bash
 ng build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Los archivos compilados se generan en:
 
-## Running unit tests
+```txt
+dist/
+```
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+---
+
+# 🧪 Pruebas del sistema
+
+Ejecutar pruebas unitarias:
 
 ```bash
 ng test
 ```
 
-## Running end-to-end tests
+Pruebas realizadas con:
 
-For end-to-end (e2e) testing, run:
+- Vitest
 
-```bash
-ng e2e
+---
+
+# 🌍 Variables de entorno
+
+## Frontend environment
+
+```ts
+export const environment = {
+  production: false,
+  apiUrl: 'http://localhost:3000'
+};
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+⚠️ Variables sensibles y configuraciones privadas no fueron subidas al repositorio.
 
-## Additional Resources
+---
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+# 🔗 Conexión con Backend
+
+El frontend consume una API desarrollada con:
+
+- Node.js
+- Express
+- MongoDB Atlas
+
+Backend desplegado en Render.
+
+---
+
+# 📱 Características del sistema
+
+✅ Responsive Design  
+✅ SPA (Single Page Application)  
+✅ Arquitectura modular  
+✅ Full Stack  
+✅ Interfaz moderna  
+✅ Despliegue en producción  
+
+---
+
+# 👨‍💻 Desarrolladores
+
+Proyecto desarrollado por:
+
+- Jose Cabrera
+- Anyeli Jaramillo
+- Danna Lagos
+
+---
+
+# 📌 Estado del proyecto
+
+✅ Frontend finalizado  
+✅ Desplegado en Vercel  
+✅ Conectado al backend  
+✅ Sistema funcional en producción
